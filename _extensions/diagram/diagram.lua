@@ -448,7 +448,8 @@ end
 --
 
 --- Converts a PDF to SVG.
-local pdf2svg = function (imgdata)
+local pdf2svg = function (imgdata, opts)
+  opts = opts or {}
   -- Using `os.tmpname()` instead of a hash would be slightly cleaner, but the
   -- function causes problems on Windows (and wasm). See, e.g.,
   -- https://github.com/pandoc-ext/diagram/issues/49
@@ -460,6 +461,9 @@ local pdf2svg = function (imgdata)
     '--export-filename=-',
     pdf_file
   }
+  if opts['text-to-path'] then
+    table.insert(args, 3, '--export-text-to-path')
+  end
   return pandoc.pipe('inkscape', args, ''), os.remove(pdf_file)
 end
 
@@ -612,7 +616,7 @@ local function code_to_figure (conf)
 
       -- Convert SVG if necessary.
       if imgtype == 'application/pdf' and conf.format.pdf2svg then
-        imgdata, imgtype = pdf2svg(imgdata), 'image/svg+xml'
+        imgdata, imgtype = pdf2svg(imgdata, engine.opt['pdf2svg']), 'image/svg+xml'
       end
 
       -- If we got here, then the transformation went ok and `img` contains

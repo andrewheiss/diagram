@@ -233,6 +233,28 @@ diagram:
 ---
 ```
 
+When converting to non-LaTeX formats, the Ti*k*Z engine uses `inkscape` to convert images to SVG. By default, these SVG files reference fonts by name, which means that text will only render correctly if those fonts are installed in the viewer. This can lead to inconsistent output in formats like HTML and docx.
+
+One option is to convert SVG text to vector outlines (paths), which ensures consistent appearance across viewers (but at the cost of making text unselectable and unsearchable in the diagram).
+
+To enable this, set `text-to-path: true` in the `pdf2svg` option for the tikz engine (this is `false` by default).
+
+Example:
+
+``` yaml
+---
+diagram:
+  engine:
+    tikz:
+      execpath: lualatex
+      pdf2svg:
+        text-to-path: true
+      header-includes:
+        - '\usepackage{adjustbox}'
+        - '\usetikzlibrary{arrows, shapes}'
+---
+```
+
 Security
 --------
 
